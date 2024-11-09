@@ -8,6 +8,39 @@ from datetime import datetime
 import pytz
 import configparser
 import os
+def format_remaining_time(time_diff_seconds):
+    """Convert time difference in seconds to formatted string in Vietnamese"""
+    if pd.isnull(time_diff_seconds):
+        return "Invalid date"
+        
+    # Convert to absolute value for calculation
+    abs_diff = abs(time_diff_seconds)
+    
+    # Calculate components
+    days = int(abs_diff // (24 * 3600))
+    remaining = abs_diff % (24 * 3600)
+    hours = int(remaining // 3600)
+    remaining = remaining % 3600
+    minutes = int(remaining // 60)
+    
+    # Format string in Vietnamese
+    parts = []
+    if days > 0:
+        parts.append(f"{days} ngày")
+    if hours > 0:
+        parts.append(f"{hours} giờ")
+    if minutes > 0:
+        parts.append(f"{minutes} phút")
+        
+    # If all parts are 0, show 0 minutes
+    if not parts:
+        return "0 phút"
+        
+    # For negative time (past deadline), add "Quá hạn"
+    if time_diff_seconds < 0:
+        return "Quá hạn " + " ".join(parts)
+        
+    return " ".join(parts)
 
 def create_default_config(config_path='config.ini'):
     """Create a default configuration file if it doesn't exist"""
